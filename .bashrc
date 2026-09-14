@@ -554,3 +554,6 @@ eval "$(zoxide init bash)"
 eval "$(atuin init bash)"
 
 . "$HOME/.atuin/bin/env"
+
+# Source local customizations if they exist
+[ -f ~/.bashrc.local ] && . ~/.bashrc.local
