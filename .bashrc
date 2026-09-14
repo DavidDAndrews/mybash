@@ -57,11 +57,10 @@ if [[ $iatest -gt 0 ]]; then bind "set show-all-if-ambiguous On"; fi
 # Set the default editor
 export EDITOR=gedit
 export VISUAL=gedit
-export sgedit='sudo gedit'
+alias sgedit='sudo gedit'
 alias pico='gedit'
-alias spico='gedit'
-alias nano='nano'
-alias snano='nano'
+alias spico='sudo gedit'
+alias snano='sudo nano'
 alias vim='nvim'
 alias vi='nvim'
 
@@ -79,8 +78,7 @@ fi
 # To have colors for ls and all grep commands such as grep, egrep and zgrep
 export CLICOLOR=1
 export LS_COLORS='no=00:fi=00:di=00;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.xml=00;31:'
-export GREP_OPTIONS='--color=auto' 
-alias grep="grep $GREP_OPTIONS"
+alias grep='grep --color=auto'
 
 #######################################################
 # MACHINE SPECIFIC ALIAS'S
@@ -102,9 +100,6 @@ alias grep="grep $GREP_OPTIONS"
 #######################################################
 # To temporarily bypass an alias, we precede the command with a \
 # EG: the ls command is aliased, but to use the normal ls command you would type \ls
-
-# Color Man Pages using Most instead of more
-alias man="man -P most"
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -442,9 +437,9 @@ apachelog() {
 # Edit the Apache configuration
 apacheconfig() {
 	if [ -f /etc/httpd/conf/httpd.conf ]; then
-		sedit /etc/httpd/conf/httpd.conf
+		sgedit /etc/httpd/conf/httpd.conf
 	elif [ -f /etc/apache2/apache2.conf ]; then
-		sedit /etc/apache2/apache2.conf
+		sgedit /etc/apache2/apache2.conf
 	else
 		echo "Error: Apache config file could not be found."
 		echo "Searching for possible locations:"
@@ -455,15 +450,15 @@ apacheconfig() {
 # Edit the PHP configuration file
 phpconfig() {
 	if [ -f /etc/php.ini ]; then
-		sedit /etc/php.ini
+		sgedit /etc/php.ini
 	elif [ -f /etc/php/php.ini ]; then
-		sedit /etc/php/php.ini
+		sgedit /etc/php/php.ini
 	elif [ -f /etc/php5/php.ini ]; then
-		sedit /etc/php5/php.ini
+		sgedit /etc/php5/php.ini
 	elif [ -f /usr/bin/php5/bin/php.ini ]; then
-		sedit /usr/bin/php5/bin/php.ini
+		sgedit /usr/bin/php5/bin/php.ini
 	elif [ -f /etc/php5/apache2/php.ini ]; then
-		sedit /etc/php5/apache2/php.ini
+		sgedit /etc/php5/apache2/php.ini
 	else
 		echo "Error: php.ini file could not be found."
 		echo "Searching for possible locations:"
@@ -474,17 +469,17 @@ phpconfig() {
 # Edit the MySQL configuration file
 mysqlconfig() {
 	if [ -f /etc/my.cnf ]; then
-		sedit /etc/my.cnf
+		sgedit /etc/my.cnf
 	elif [ -f /etc/mysql/my.cnf ]; then
-		sedit /etc/mysql/my.cnf
+		sgedit /etc/mysql/my.cnf
 	elif [ -f /usr/local/etc/my.cnf ]; then
-		sedit /usr/local/etc/my.cnf
+		sgedit /usr/local/etc/my.cnf
 	elif [ -f /usr/bin/mysql/my.cnf ]; then
-		sedit /usr/bin/mysql/my.cnf
+		sgedit /usr/bin/mysql/my.cnf
 	elif [ -f ~/my.cnf ]; then
-		sedit ~/my.cnf
+		sgedit ~/my.cnf
 	elif [ -f ~/.my.cnf ]; then
-		sedit ~/.my.cnf
+		sgedit ~/.my.cnf
 	else
 		echo "Error: my.cnf file could not be found."
 		echo "Searching for possible locations:"
@@ -545,7 +540,11 @@ export LESS_TERMCAP_se=$(printf '\e[0m') # leave standout mode
 export LESS_TERMCAP_so=$(printf '\e[01;33m') # enter standout mode - yellow
 export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;36m') # enter underline mode - cyan
-export PAGER="most"
+# Use `most` for man pages and general paging when it is available
+if command -v most >/dev/null 2>&1; then
+	alias man='man -P most'
+	export PAGER='most'
+fi
 
 # Install Starship - curl -sS https://starship.rs/install.sh | sh
 eval "$(starship init bash)"
