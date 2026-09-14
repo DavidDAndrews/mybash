@@ -1,46 +1,158 @@
-## Overview of ChrisTitusTech's `.bashrc` Configuration
+# ChrisTitusTech's `.bashrc` Configuration (Linux/Mac)
 
-The `.bashrc` file is a script that runs every time a new terminal session is started in Unix-like operating systems. It is used to configure the shell session, set up aliases, define functions, and more, making the terminal easier to use and more powerful. Below is a summary of the key sections and functionalities defined in the provided `.bashrc` file.
+<img width="981" height="509" alt="SCR-20260713-cpkx" src="https://github.com/user-attachments/assets/67dc2cdb-7101-4a20-9635-99c244f24db5" />
 
-### Initial Setup and System Checks
+## Overview
 
-- **Environment Checks**: The script checks if it is running in an interactive mode and sets up the environment accordingly.
-- **System Utilities**: It checks for the presence of utilities like `fastfetch`, `bash-completion`, and system-specific configurations (`/etc/bashrc`).
+This repository provides a comprehensive `.bashrc` configuration along with supporting scripts and configuration files to enhance your terminal experience in Unix-like operating systems. It configures the shell session by setting up aliases, defining functions, customizing the prompt, and more, significantly improving the terminal's usability and power.
 
-### Aliases and Functions
+## Table of Contents
 
-- **Aliases**: Shortcuts for common commands are set up to enhance productivity. For example, `alias cp='cp -i'` makes the `cp` command interactive, asking for confirmation before overwriting files.
-- **Functions**: Custom functions for complex operations like `extract()` for extracting various archive types, and `cpp()` for copying files with a progress bar.
+- [Installation](#installation)
+- [Switching Color Palettes](#switching-color-palettes)
+- [Uninstallation](#uninstallation)
+- [Configuration Files](#configuration-files)
+  - [.bashrc](#bashrc)
+  - [starship.toml](#starshiptoml)
+  - [config.jsonc](#configjsonc)
+- [Key Features](#key-features)
+- [Advanced Functions](#advanced-functions)
+- [System-Specific Configurations](#system-specific-configurations)
+- [Conclusion](#conclusion)
 
-### Prompt Customization and History Management
+## Installation
 
-- **Prompt Command**: The `PROMPT_COMMAND` variable is set to automatically save the command history after each command.
-- **History Control**: Settings to manage the size of the history file and how duplicates are handled.
+To install the `.bashrc` configuration, execute the following commands in your terminal:
 
-### System-Specific Aliases and Settings
+```sh
+git clone --depth=1 https://github.com/christitustech/mybash.git
+cd mybash
+./setup.sh
+```
 
-- **Editor Settings**: Sets `nvim` (NeoVim) as the default editor.
-- **Conditional Aliases**: Depending on the system type (like Fedora), it sets specific aliases, e.g., replacing `cat` with `bat`.
+The `setup.sh` script automates the installation process by:
 
-### Enhancements and Utilities
+- Creating necessary directories (`~/.local/share/mybash`, `~/.config/starship`, and `~/.config/fastfetch`)
+- Copying the managed repository files into `~/.local/share/mybash`
+- Installing Homebrew on macOS if it is not already installed
+- Installing Bash 5 with Homebrew on macOS
+- Adding Homebrew Bash to `/etc/shells` and setting it as the default login shell on macOS
+- Installing dependencies (bash-completion, neovim, starship, fzf, zoxide)
+- Installing Starship and JetBrainsMono Nerd Font on Linux
+- Selecting JetBrainsMono Nerd Font in Ptyxis or GNOME Terminal when available
+- Installing the MesloLGS Nerd Font required for the prompt on macOS when available
+- Linking configuration files from `~/.local/share/mybash` to your home directory
+- Linking the fastfetch config to `~/.config/fastfetch/config.jsonc`
+- Ensuring `~/.bash_profile` initializes Homebrew on macOS
+- Ensuring `~/.bash_profile` sources `~/.bashrc` on macOS
+- Setting up additional utilities like `fastfetch`
 
-- **Color and Formatting**: Enhancements for command output readability using colors and formatting for tools like `ls`, `grep`, and `man`.
-- **Navigation Shortcuts**: Aliases to simplify directory navigation, e.g., `alias ..='cd ..'` to go up one directory.
-- **Safety Features**: Aliases for safer file operations, like using `trash` instead of `rm` for deleting files, to prevent accidental data loss.
-- **Extensive Zoxide support**: Easily navigate with `z`, `zi`, or pressing Ctrl+f to launch zi to see frequently used navigation directories.
+On macOS, `setup.sh` may prompt for your password when it adds Homebrew Bash to `/etc/shells` and changes your default shell. Restart Terminal after installation, then verify with:
 
-### Advanced Functions
+```sh
+echo "$SHELL"
+bash --version
+```
 
-- **System Information**: Functions to display system information like `distribution()` to identify the Linux distribution.
-- **Networking Utilities**: Tools to check internal and external IP addresses.
-- **Resource Monitoring**: Commands to monitor system resources like disk usage and open ports.
+`$SHELL` should point to the Homebrew Bash path, such as `/opt/homebrew/bin/bash` on Apple Silicon or `/usr/local/bin/bash` on Intel Macs. On Linux, ensure you have the required permissions and a supported package manager.
 
-### Installation and Configuration Helpers
+## Switching Color Palettes
 
-- **Auto-Install**: A function `install_bashrc_support()` to automatically install necessary utilities based on the system type.
-- **Configuration Editors**: Functions to edit important configuration files directly, e.g., `apacheconfig()` for Apache server configurations.
+Use `starship-theme` to recolor the prompt without changing its layout:
 
-### Conclusion
+```bash
+starship-theme          # interactive picker
+starship-theme fedora   # apply a palette directly
+starship-theme list     # list available palettes
+```
 
-This `.bashrc` file is a comprehensive setup that not only enhances the shell experience with useful aliases and functions but also provides system-specific configurations and safety features to cater to different user needs and system types. It is designed to make the terminal more user-friendly, efficient, and powerful for an average user.
+Available palettes include Ubuntu, Claude, Arch, Fedora, Debian, Mint, Manjaro, Pop!_OS, Kali, Gentoo, Dracula, and the original Nord theme.
 
+![Starship color palettes](assets/palettes.png)
+
+## Uninstallation
+
+To uninstall the `.bashrc` configuration, run:
+
+```sh
+cd mybash
+chmod +x uninstall.sh
+./uninstall.sh
+./uninstall.sh --keep-deps
+```
+
+Use `--keep-deps` to remove the mybash configuration while retaining installed software and fonts.
+
+The `uninstall.sh` script reverses the installation process by:
+
+- Removing installed dependencies
+- Uninstalling fonts
+- Removing symbolic links to configuration files
+- Restoring the `.bashrc` backup created during installation
+- Restoring previous Ptyxis or GNOME Terminal font settings
+- Deleting the `~/.local/share/mybash` directory
+- Cleaning up additional utilities like `starship`, `fzf`, and `zoxide`
+
+After running the script, it's recommended to restart your shell to apply the changes.
+
+## Configuration Files
+
+### `.bashrc`
+
+The `.bashrc` file defines aliases, functions, and environment variables to enhance your shell experience. Key features include:
+
+- **Aliases**: Shortcuts for common commands (e.g., `alias cp='cp -i'`)
+- **Functions**: Custom functions for tasks like extracting archives and copying files with progress
+
+### `starship.toml`
+
+The `starship.toml` file configures the [Starship](https://starship.rs/) prompt, providing a highly customizable and informative shell prompt. It includes:
+
+- **Theme Settings**: Defines colors and symbols for different prompt segments
+- **Module Configurations**: Customizes modules like `python`, `git`, `docker_context`, and various programming languages
+- **Format Customization**: Structures the layout and truncation of paths for a cleaner look
+
+### `config.jsonc`
+
+The `config.jsonc` file configures [fastfetch](https://github.com/AlexRogalskiy/fastfetch), a system information tool. It includes:
+
+- **Logo and Display Settings**: Customizes the appearance of system logos and separators
+- **Modules**: Defines which system information modules to display, such as CPU, GPU, OS, kernel, and uptime
+- **Custom Sections**: Adds custom formatted sections for hardware and software information
+
+## Key Features
+
+1. **Aliases and Functions**
+   - Shortcuts for common commands
+   - Custom functions for complex operations (e.g., extracting archives, copying with progress)
+
+2. **Prompt Customization and History Management**
+   - Configures PROMPT_COMMAND for automatic history saving
+   - Manages history file size and handles duplicates
+
+3. **Enhancements and Utilities**
+   - Improves command output readability with colors
+   - Introduces safer file operations (e.g., using `trash` instead of `rm`)
+   - Integrates Zoxide for easy directory navigation
+
+4. **Installation and Configuration Helpers**
+   - Auto-installs necessary utilities based on system type
+   - Provides functions to edit important configuration files
+
+## Advanced Functions
+
+- System information display
+- Networking utilities (e.g., IP address checks)
+- Resource monitoring tools
+
+## System-Specific Configurations
+
+- Editor settings (NeoVim as default)
+- Conditional aliases based on system type
+- Package manager-specific commands
+
+## Conclusion
+
+This `.bashrc` configuration offers a powerful and customizable terminal environment suitable for various Unix-like systems. It enhances productivity through smart aliases, functions, and integrated tools while maintaining flexibility for system-specific needs. Whether you're a developer, system administrator, or power user, this setup aims to make your terminal experience more efficient and enjoyable.
+
+For any issues, suggestions, or contributions, please open an issue or pull request in this repository. We welcome community involvement to make this configuration even better!
